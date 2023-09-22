@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "RPI 4 - attach",
+      "type": "gdb",
+      "target": "192.168.0.21:9999",
+      "request": "attach",
+      "remote": true,
+      "cwd": "${workspaceRoot}", 
+      "gdbpath": "gdb-multiarch",
+      "executable": "out_rpi/debug_rpi",
+      "stopAtConnect": true,
+      "debugger_args": [
+        "--nh",
+        "-iex", "set architecture aarch64",
+        "-iex", "set sysroot /mnt/d/programming/x-compile-os/rpi4",
+      ]
+    }
+  ]
+}
