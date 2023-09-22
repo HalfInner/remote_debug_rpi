@@ -1,0 +1,6 @@
+out*/
+.gdb_history
+*.aux
+*.log
+*.out
+*.pdf
