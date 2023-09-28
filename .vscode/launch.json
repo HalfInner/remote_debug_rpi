@@ -10,9 +10,9 @@
       "cwd": "${workspaceRoot}", 
       "gdbpath": "gdb-multiarch",
       "executable": "out_rpi/debug_rpi",
-      "stopAtConnect": true,
       "debugger_args": [
         "--nh",
+        "-iex", "set solib-search-path /mnt/d/programming/remote_debug_rpi/out_rpi",
         "-iex", "set architecture aarch64",
         "-iex", "set sysroot /mnt/d/programming/x-compile-os/rpi4",
       ]
