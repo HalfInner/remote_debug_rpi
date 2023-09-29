@@ -1,7 +1,1 @@
-{
-  "clangd.arguments": [
-    "-log=verbose",
-    "--background-index",
-    "--compile-commands-dir=out_rpi"
-  ]
-}
+{"clangd.arguments": ["--compile-commands-dir=out_rpi"]}
