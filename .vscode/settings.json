@@ -1,1 +1,5 @@
-{"clangd.arguments": ["--compile-commands-dir=out_rpi"]}
+{
+  "clangd.arguments": [
+    "--compile-commands-dir=out_rpi"
+  ]
+}
