@@ -19,6 +19,11 @@
 \usepackage{xcolor} % XXX: Remove that
 % \usepackage{newunicodechar}
 
+% \usepackage{sansmathfonts}
+% \usepackage[T1]{fontenc}
+% \renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+% \renewcommand{\familydefault}{\ttdefault}
+
 % unicodes styling
 % \DeclareUnicodeCharacter{2014}{\dash}
 % unicodes - end
@@ -31,15 +36,14 @@
 \definecolor{stringColor}{rgb}{0.558215, 0.000000, 0.135316}
 
 \lstset{
-    abovecaptionskip=\vspace{-4pt},
+    abovecaptionskip=\vspace{0pt},
     belowcaptionskip=\vspace{0pt},
     backgroundcolor=\color{yellow!10},
-    basicstyle=\ttfamily\tiny,
+    basicstyle=\ttfamily\footnotesize,
     breakatwhitespace=true,
     breaklines=true,
     postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
     commentstyle=\color{commentsColor}\textit,
-    caption={},
     escapeinside={\%*}{*)},
     extendedchars=false,
     frame=single,
@@ -51,17 +55,15 @@
     ndkeywordstyle=\color{identifierColor}\bfseries,
     inputencoding=utf8,
     keywordstyle=\color{keywordsColor}\bfseries,
-    language=bash,
-    % numbers=right,
-    % numberstyle=\footnotesize,
-    % numberstyle=\tiny\color{commentsColor},
+    numbers=none,
+    numberstyle=\footnotesize,
     rulecolor=\color{black!30},
     stringstyle=\color{stringColor}\bfseries,
     showspaces=false,
-    tabsize=2,
+    tabsize=2pt,
     title=\lstname,
-  breaklines=true,
-  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
 }
 
 \lstdefinestyle{c}{language=c,
@@ -78,11 +80,11 @@
         keywordstyle={[2]\color{clr-constant}}, % you'll need to define these or use a custom language
         tabsize=2
 }
-\lstdefinestyle{sh}{
-  language=sh
-}
+% \lstdefinestyle{sh}{
+%   language=sh
+% }
 
-\lstdefinestyle{json}{language=json,
+\lstdefinestyle{python}{language=python,
   morekeywords={uint32_t, int32_t, uint8_t, printf, size_t},
       backgroundcolor=\color{clr-background},
       basicstyle=\color{clr-text}, % any text
@@ -128,10 +130,11 @@
 Tools: \textit{RPI4, C++, VSCode, CMake, Linux}
 
 \subsection*{Minimal project structure}
-\small
+\normalsize
 
-Verify whether your file structure follows the following graph:
-\begin{lstlisting}[language=txt,backgroundcolor=\color{gray!10},caption={}]
+Before we start with the main topic, a few files should be created.
+Thus create a project which should fit at least the following tree directory:
+\begin{lstlisting}[language=sh,caption={},backgroundcolor=\color{gray!10}]
 .
 -> .vscode
    -> launch.json
@@ -140,72 +143,16 @@ Verify whether your file structure follows the following graph:
     -> main.cc
 -> CMakeLists.txt
 -> rpi4.toolchain.cmake
--> build_rpi.sh
 \end{lstlisting}
 
-Once you got it, fill up each file as in examples below:
-
-% \textit{}
-\tiny{}File: launch.json\small{}
-\begin{lstlisting}[language=sh,caption={},breaklines=true,literate={,}{,\allowbreak}1]
-{"version":"0.2.0", "configurations":[{"name":"RPI 4 - attach", "type":"gdb", "target":"192.168.0.21:9999", "request":"attach", "remote":true,"cwd":"${workspaceRoot}", "gdbpath":"gdb-multiarch", "executable":"out_rpi/debug_rpi", "debugger_args":["--nh", "-iex", "set solib-search-path /mnt/d/programming/remote_debug_rpi/out_rpi", "-iex", "set architecture aarch64", "-iex", "set sysroot /mnt/d/programming/x-compile-os/rpi4"]}]}
-\end{lstlisting}
-
-\tiny{}File: settings.json\small{}
-\begin{lstlisting}[language=json,breaklines=true,caption={}]
-{"clangd.arguments": ["--compile-commands-dir=out_rpi"]}
-\end{lstlisting}
-
-\tiny{}File: main.cc\small{}
-\begin{lstlisting}[language=c,caption={}]
-#include <iostream>
-int main(int argc, char* argv[]) {
-  auto msg{argc == 2 ? argv[1] : ""};
-  std::cout << "msg: " << msg << "\n";
-}
-\end{lstlisting}
-
-\tiny{}File: CMakeLists.txt\small{}
-\begin{lstlisting}[language=sh,breaklines=true,caption={}]
-cmake_minimum_required(VERSION 3.26)
-project(debug_rpi)
-add_executable(debug_rpi src/main.cc)
-set_target_properties(debug_rpi PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED True)
-\end{lstlisting}
-
-\tiny{}File: rpi4.toolchain.cmake\small{}
-\begin{lstlisting}[language=sh,breaklines=true,caption={}]
-set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR arm)
-set(CMAKE_SYSROOT /mnt/d/programming/x-compile-os/rpi4)
-set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc-10)
-set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++-10)
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
-\end{lstlisting}
-% backgroundcolor=\color{yellow!10}
-
-\tiny{}File: build\_rpi.sh\small{}
-\begin{lstlisting}[language=sh,breaklines=true,caption={}]
-cmake -S . -B out_rpi -DCMAKE_EXPORT_COMPILE_COMMANDS=True -DCMAKE_BUILD_TYPE=Debug --toolchain rpi4.toolchain.cmake
-cmake --build out_rpi -j7
-\end{lstlisting}
-
-Replace the following paths with your own favorite paths as needed.
-\small
+A content of the above structure can found by the reader in the exeternal repo\cite{bib:example}.
+Once you get it, replace the following paths with your own favorite paths as needed
 \begin{enumerate}
-  \item \textit{/mnt/d/programming/remote\_debug\_rpi/} - workspace
-  \item \textit{/mnt/d/programming/x-compile-os/} - image directory
+  \item workspace: \\
+        \textit{/mnt/d/programming/remote\_debug\_rpi/}
+  \item image directory: \\
+        \textit{/mnt/d/programming/x-compile-os/}
 \end{enumerate}
-
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{res/remote_debug_rpi_light.png}
-  \caption*{VSCode attached to a remote app}
-  \label{fig:debug}
-\end{figure}
 
 \subsection*{Environment}
 Install x-compile and indexing tools
@@ -213,56 +160,60 @@ Install x-compile and indexing tools
 sudo apt install -y gcc-10-aarch64-linux-gnu g++-10-aarch64-linux-gnu gdb-multiarch clangd
 \end{lstlisting}
 
-Dump your RPI SD card or download a proper flash image\cite{bib:rpi-images}.
+Dump your RPI SD card or download a proper flash image\cite{bib:rpi-images} as \textit{rpi\_img}.
 Then we are ready to configure your system and install plugin for debugging.
 
 \begin{lstlisting}[language=sh,backgroundcolor=\color{gray!10},breaklines=true,escapechar=|,caption={}]]
-wget https://downloads.raspberrypi.org/raspios_lite_arm64/ images/raspios_lite_arm64-2023-05-03/ 2023-05-03-raspios-bullseye-arm64-lite.img.xz
-unxz --keep 2023-05-03-raspios-bullseye-arm64-lite.img.xz
+unxz --keep <rpi_img>.img.xz
 mkdir -p /mnt/d/programming/x-compile-os/rpi4
-sudo mount -v -o  offset=272629760  2023-05-03-raspios-bullseye-arm64-lite.img /mnt/d/programming/x-compile-os/rpi4
+sudo mount -v -o  offset=272629760  <rpi_img>.img.xz /mnt/d/programming/x-compile-os/rpi4
 
 code --install-extension webfreak.debug
 code --install-extension llvm-vs-code-extensions.vscode-clangd
 \end{lstlisting}
 
-
 \subsection*{Playground}
-Now compile the project and put the binary on the raspberry.
+Now compile the project and put a compiled binary on the raspberry.
 \begin{lstlisting}[language=sh,breaklines=true,caption={},,escapechar=|,backgroundcolor=\color{gray!10}]
-./build_rpi.sh
+cmake -S . -B out_rpi -DCMAKE_EXPORT_COMPILE_COMMANDS=True -DCMAKE_BUILD_TYPE=Debug --toolchain rpi4.toolchain.cmake
+cmake --build out_rpi -j7
 scp out_rpi/debug_rpi rpi:|$\sim$|/
 \end{lstlisting}
 
-The final step is to run the binary using \textit{gdbserver}, and after that, run a debug session by attaching it in your VSCode (or by pressing the "\textbf{F5}" key).
+The final step is to run the binary using \textift{gdbserver}, and after that, run a debug session by attaching it in your VSCode (or by pressing the "\textbf{F5}" key).
 \begin{lstlisting}[language=sh,breaklines=true,caption={},escapechar=|,backgroundcolor=\color{gray!10}]
 # FROM RPI
 gdbserver :9999 |$\sim$|/debug_rpi
 \end{lstlisting}
-Voilà! You are now a driver.
+Voilà! You have now become a driver.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{res/remote_debug_rpi_light.png}
+  \caption*{VSCode attached to a remote app}
+  \label{fig:debug}
+\end{figure}
 
 \subsection*{Further steps}
 Being in sync with the image and the RPI is highly recommended.
   If any library is installed directly on the RPI, the image
   should be updated with the same copy. And until any platform-spefic header is used
-  f.e. \textit{linux/spi.h} or \textit{linux/gpio.h}, the code should be compilable
+  f.e. \mbox{\textit{linux/spi.h}} or \mbox{\textit{linux/gpio.h}}, the code should be compilable
   locally without additional effort.
 
-\\
 With the current setup, you also get automatically generated \textit
   {compile\_commands.json} file utilized by \textit{clangd}
   \cite{bib:clangd} which provides code navigation and code completion.
   The same approach is appliccable even for quite large repositories,
   such as Chromium.
-\\
+
 Last but not least, a major gain of remote debugging, not used here, is reducing
   the required disk usage by using \textit{stripped} binaries on the RPI while keeping a debuggable version on your PC.
 
 \subsection*{Misses}
 \begin{enumerate}
   \item rpi ip in the \textit{launch.json} file - hardcoded, seems the plugin does not support aliases,
-        so has to be replaced with your own RPI4 ip address
-  \item port 9999 - I like this one, but your firewall can have different feelings
+        so it has to be replaced with your own RPI4 ip address
+  \item port 9999 - I like the number, but your firewall can have different feelings
   \item mounting offset - check \cite{bib:mounting-approach} out
 \end{enumerate}
 
@@ -275,18 +226,17 @@ Things are gettting much more complicated when project grows larger,
   such as \textit{set solib-search-path path} or
   \textit{set substitute-path from to} etc.\cite{bib:gdb-additional-configs}
 
-
 \subsection*{References}
 \begin{enumerate}[label={[\arabic*]}]
-  \tiny
-  \bibitem{bib:example} The example \url{https://github.com/HalfInner/remote_debug_rpi}
-  \bibitem{bib:c++-rpi} \url{https://tttapa.github.io/Pages/Raspberry-Pi/C++-Development-RPiOS/index.html}
+  \footnotesize
+  \bibitem{bib:example} \url{https://github.com/HalfInner/remote_debug_rpi}
   \bibitem{bib:rpi-images} \url{https://www.raspberrypi.com/software/operating-systems/}
   \bibitem{bib:clangd} \url{https://clangd.llvm.org/}
   \bibitem{bib:mounting-approach} \url{https://raspberrypi.stackexchange.com/a/13138}
-  \bibitem{bib:gdb-remote-debug} \url{https://developers.redhat.com/blog/2015/04/28/remote-debugging-with-gdb}
   \bibitem{bib:gdb-additional-configs} \url{https://sourceware.org/gdb/onlinedocs/gdb/Source-Path.html}
+  \bibitem{bib:c++-rpi} \url{https://tttapa.github.io/Pages/Raspberry-Pi/C++-Development-RPiOS/index.html}
 \end{enumerate}
 
+% The font used is \textFontName
 
 \end{document}
