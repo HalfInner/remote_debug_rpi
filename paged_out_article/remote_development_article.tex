@@ -132,8 +132,8 @@ Tools: \textit{RPI4, C++, VSCode, CMake, Linux}
 \subsection*{Minimal project structure}
 \normalsize
 
-Before we start with the main topic, a few files should be created.
-Thus create a project which should fit at least the following tree directory:
+Before we start with the main topic, a few files need to be created.
+Thus, create a project which should match at least the following tree directory:
 \begin{lstlisting}[language=sh,caption={},backgroundcolor=\color{gray!10}]
 .
 -> .vscode
@@ -145,7 +145,7 @@ Thus create a project which should fit at least the following tree directory:
 -> rpi4.toolchain.cmake
 \end{lstlisting}
 
-A content of the above structure can found by the reader in the exeternal repo\cite{bib:example}.
+The content of the above structure can be found by the reader in the exeternal repo\cite{bib:example}.
 Once you get it, replace the following paths with your own favorite paths as needed
 \begin{enumerate}
   \item workspace: \\
@@ -161,7 +161,7 @@ sudo apt install -y gcc-10-aarch64-linux-gnu g++-10-aarch64-linux-gnu gdb-multia
 \end{lstlisting}
 
 Dump your RPI SD card or download a proper flash image\cite{bib:rpi-images} as \textit{rpi\_img}.
-Then we are ready to configure your system and install plugin for debugging.
+Then, you are ready to configure your system and install the plugin for debugging.
 
 \begin{lstlisting}[language=sh,backgroundcolor=\color{gray!10},breaklines=true,escapechar=|,caption={}]]
 unxz --keep <rpi_img>.img.xz
@@ -173,7 +173,7 @@ code --install-extension llvm-vs-code-extensions.vscode-clangd
 \end{lstlisting}
 
 \subsection*{Playground}
-Now compile the project and put a compiled binary on the raspberry.
+Now, compile the project and put the compiled binary on the raspberry.
 \begin{lstlisting}[language=sh,breaklines=true,caption={},,escapechar=|,backgroundcolor=\color{gray!10}]
 cmake -S . -B out_rpi -DCMAKE_EXPORT_COMPILE_COMMANDS=True -DCMAKE_BUILD_TYPE=Debug --toolchain rpi4.toolchain.cmake
 cmake --build out_rpi -j7
@@ -197,7 +197,7 @@ Voilà! You have now become a driver.
 Being in sync with the image and the RPI is highly recommended.
   If any library is installed directly on the RPI, the image
   should be updated with the same copy. And until any platform-spefic header is used
-  f.e. \mbox{\textit{linux/spi.h}} or \mbox{\textit{linux/gpio.h}}, the code should be compilable
+  e.g. \mbox{\textit{linux/spi.h}} or \mbox{\textit{linux/gpio.h}}, the code should be compilable
   locally without additional effort.
 
 With the current setup, you also get automatically generated \textit
@@ -213,12 +213,12 @@ Last but not least, a major gain of remote debugging, not used here, is reducing
 \begin{enumerate}
   \item rpi ip in the \textit{launch.json} file - hardcoded, seems the plugin does not support aliases,
         so it has to be replaced with your own RPI4 ip address
-  \item port 9999 - I like the number, but your firewall can have different feelings
+  \item port 9999 - I like the number, but your firewall might feel differently
   \item mounting offset - check \cite{bib:mounting-approach} out
 \end{enumerate}
 
 \subsection*{Caveats}
-Things are gettting much more complicated when project grows larger,
+Things are gettting much more complicated when the project grows larger,
   libraries are distributed more widely, and it is compiled on a remote
   station using a virtual machine (e.g. \textit{qemu}). Eventually,
   your simple configuration may stop working. However,
